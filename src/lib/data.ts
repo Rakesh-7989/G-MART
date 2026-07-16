@@ -54,7 +54,7 @@ export const products: Product[] = [
     id: "8", name: "Crystal Chandelier", slug: "crystal-chandelier",
     description: "Bohemian crystal chandelier with hand-polished K9 crystal drops. Gold-finished frame. Dimmable LED compatible.",
     price: 54999,
-    images: ["https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800", "https://images.unsplash.com/photo-1532372576444-dda954194ad0?w=800"],
+    images: ["https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=800", "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=800"],
     category: "Lighting", material: "K9 Crystal + Brass", dimensions: "80 x 80 x 100 cm", color: "Crystal / Gold", inStock: true, rating: 4.7, reviewCount: 52,
   },
   {

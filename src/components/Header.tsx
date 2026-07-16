@@ -2,11 +2,23 @@
 
 import Link from "next/link";
 import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { categories } from "@/lib/data";
+import { CartItem } from "@/lib/types";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+
+  useEffect(() => {
+    function updateCart() {
+      const cart: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
+      setCartCount(cart.reduce((sum, item) => sum + item.quantity, 0));
+    }
+    updateCart();
+    window.addEventListener("cartUpdated", updateCart);
+    return () => window.removeEventListener("cartUpdated", updateCart);
+  }, []);
 
   return (
     <header className="bg-white/95 backdrop-blur-sm border-b border-luxury-gold/20 sticky top-0 z-50">
@@ -44,9 +56,11 @@ export default function Header() {
             </Link>
             <Link href="/cart" className="relative text-luxury-brown/80 hover:text-luxury-gold transition-colors">
               <ShoppingBag size={20} />
-              <span className="absolute -top-2 -right-2 bg-luxury-gold text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-luxury-gold text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </Link>
           </div>
         </div>

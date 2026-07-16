@@ -1,4 +1,5 @@
-import { ShoppingBag, DollarSign, Package, Users, TrendingUp } from "lucide-react";
+import Link from "next/link";
+import { ShoppingBag, DollarSign, Package, Users } from "lucide-react";
 
 const stats = [
   { label: "Total Orders", value: "156", icon: ShoppingBag, change: "+12%", positive: true },
@@ -20,7 +21,12 @@ export default function AdminPage() {
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-10">
         <h1 className="font-serif text-3xl text-luxury-brown">Admin Dashboard</h1>
-        <button className="btn-primary text-sm">Add Product</button>
+        <div className="flex gap-3">
+          <Link href="/" className="border border-luxury-gold/30 text-luxury-brown px-4 py-2 text-sm uppercase tracking-wider hover:bg-luxury-gold/10 transition-colors">
+            Back to Store
+          </Link>
+          <button className="btn-primary text-sm">Add Product</button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">

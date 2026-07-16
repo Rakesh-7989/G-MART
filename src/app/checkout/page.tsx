@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CartItem } from "@/lib/types";
@@ -8,16 +10,63 @@ import { formatPrice } from "@/lib/utils";
 export default function CheckoutPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const [placed, setPlaced] = useState(false);
+  const [form, setForm] = useState({
+    firstName: "", lastName: "", email: "", phone: "",
+    line1: "", line2: "", city: "", state: "", pincode: "",
+  });
 
   useEffect(() => {
     setMounted(true);
-    const stored = JSON.parse(localStorage.getItem("cart") || "[]");
-    setItems(stored);
+    updateCart();
+    window.addEventListener("cartUpdated", updateCart);
+    return () => window.removeEventListener("cartUpdated", updateCart);
   }, []);
+
+  function updateCart() {
+    const stored: CartItem[] = JSON.parse(localStorage.getItem("cart") || "[]");
+    setItems(stored);
+  }
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  function handlePlaceOrder(e: React.FormEvent) {
+    e.preventDefault();
+    const order = {
+      id: "ORD-" + Date.now(),
+      items,
+      total: subtotal,
+      shippingAddress: {
+        line1: form.line1, line2: form.line2,
+        city: form.city, state: form.state, pincode: form.pincode,
+      },
+      customer: { name: `${form.firstName} ${form.lastName}`, email: form.email, phone: form.phone },
+      paymentMethod: "cod",
+      status: "pending",
+      createdAt: new Date().toISOString(),
+    };
+    console.log("Order placed:", order);
+    localStorage.removeItem("cart");
+    window.dispatchEvent(new Event("cartUpdated"));
+    setPlaced(true);
+  }
+
+  function updateField(field: string, value: string) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  }
+
   if (!mounted) return null;
+
+  if (placed) {
+    return (
+      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
+        <div className="text-6xl mb-6">✓</div>
+        <h1 className="font-serif text-3xl text-luxury-brown mb-4">Order Placed Successfully!</h1>
+        <p className="text-luxury-brown/60 mb-8">Thank you for shopping at G-MART. Your order will be delivered soon.</p>
+        <Link href="/products" className="btn-primary">Continue Shopping</Link>
+      </div>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -35,19 +84,19 @@ export default function CheckoutPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <div>
           <h2 className="font-serif text-xl text-luxury-brown mb-6">Shipping Details</h2>
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handlePlaceOrder}>
             <div className="grid grid-cols-2 gap-4">
-              <input type="text" placeholder="First Name" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-              <input type="text" placeholder="Last Name" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+              <input type="text" placeholder="First Name" value={form.firstName} onChange={(e) => updateField("firstName", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+              <input type="text" placeholder="Last Name" value={form.lastName} onChange={(e) => updateField("lastName", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
             </div>
-            <input type="email" placeholder="Email" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-            <input type="tel" placeholder="Phone" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-            <input type="text" placeholder="Address Line 1" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-            <input type="text" placeholder="Address Line 2" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
+            <input type="email" placeholder="Email" value={form.email} onChange={(e) => updateField("email", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+            <input type="tel" placeholder="Phone" value={form.phone} onChange={(e) => updateField("phone", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+            <input type="text" placeholder="Address Line 1" value={form.line1} onChange={(e) => updateField("line1", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+            <input type="text" placeholder="Address Line 2" value={form.line2} onChange={(e) => updateField("line2", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
             <div className="grid grid-cols-3 gap-4">
-              <input type="text" placeholder="City" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-              <input type="text" placeholder="State" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-              <input type="text" placeholder="Pincode" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+              <input type="text" placeholder="City" value={form.city} onChange={(e) => updateField("city", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+              <input type="text" placeholder="State" value={form.state} onChange={(e) => updateField("state", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+              <input type="text" placeholder="Pincode" value={form.pincode} onChange={(e) => updateField("pincode", e.target.value)} className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
             </div>
 
             <h2 className="font-serif text-xl text-luxury-brown mt-8 mb-4">Payment Method</h2>
@@ -56,14 +105,6 @@ export default function CheckoutPage() {
               <div>
                 <p className="font-medium text-luxury-brown">Cash on Delivery</p>
                 <p className="text-sm text-luxury-brown/60">Pay when your order arrives</p>
-              </div>
-            </label>
-
-            <label className="flex items-center gap-3 p-4 border border-luxury-gold/20 bg-white cursor-pointer mt-3">
-              <input type="radio" name="payment" className="accent-luxury-gold" />
-              <div>
-                <p className="font-medium text-luxury-brown">Pay Online (Cashfree)</p>
-                <p className="text-sm text-luxury-brown/60">Credit/Debit Card, UPI, Net Banking</p>
               </div>
             </label>
 

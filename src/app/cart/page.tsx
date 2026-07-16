@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,12 +18,16 @@ export default function CartPage() {
     const stored = JSON.parse(localStorage.getItem("cart") || "[]");
     setItems(stored);
 
-    const handler = () => {
+    function handler() {
       const updated = JSON.parse(localStorage.getItem("cart") || "[]");
       setItems(updated);
-    };
+    }
     window.addEventListener("cartUpdated", handler);
-    return () => window.removeEventListener("cartUpdated", handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener("cartUpdated", handler);
+      window.removeEventListener("storage", handler);
+    };
   }, []);
 
   function updateQuantity(productId: string, delta: number) {

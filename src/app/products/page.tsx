@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { products, categories } from "@/lib/data";
 import ProductCard from "@/components/ProductCard";
 
@@ -23,7 +24,7 @@ export default function ProductsPage({
 
       <div className="flex flex-wrap justify-center gap-3 mb-12">
         {categories.map((cat) => (
-          <a
+          <Link
             key={cat.slug}
             href={cat.slug === "all" ? "/products" : `/products?category=${cat.slug}`}
             className={`px-6 py-2 text-sm uppercase tracking-wider transition-colors ${
@@ -33,7 +34,7 @@ export default function ProductsPage({
             }`}
           >
             {cat.name}
-          </a>
+          </Link>
         ))}
       </div>
 

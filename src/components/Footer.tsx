@@ -32,10 +32,9 @@ export default function Footer() {
               Support
             </h4>
             <div className="flex flex-col gap-3 text-sm">
-              <Link href="/contact" className="hover:text-luxury-gold transition-colors">Contact Us</Link>
-              <Link href="/shipping" className="hover:text-luxury-gold transition-colors">Shipping & Returns</Link>
-              <Link href="/faq" className="hover:text-luxury-gold transition-colors">FAQ</Link>
-              <Link href="/warranty" className="hover:text-luxury-gold transition-colors">Warranty</Link>
+              <Link href="/auth/login" className="hover:text-luxury-gold transition-colors">My Account</Link>
+              <Link href="/cart" className="hover:text-luxury-gold transition-colors">Cart</Link>
+              <Link href="/products" className="hover:text-luxury-gold transition-colors">Help & FAQ</Link>
             </div>
           </div>
 
@@ -44,10 +43,8 @@ export default function Footer() {
               Company
             </h4>
             <div className="flex flex-col gap-3 text-sm">
-              <Link href="/about" className="hover:text-luxury-gold transition-colors">About Us</Link>
-              <Link href="/careers" className="hover:text-luxury-gold transition-colors">Careers</Link>
-              <Link href="/privacy" className="hover:text-luxury-gold transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-luxury-gold transition-colors">Terms of Service</Link>
+              <Link href="/" className="hover:text-luxury-gold transition-colors">Home</Link>
+              <Link href="/products" className="hover:text-luxury-gold transition-colors">Collection</Link>
             </div>
           </div>
         </div>

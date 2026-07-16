@@ -8,16 +8,16 @@ export default function RegisterPage() {
           <h1 className="font-serif text-3xl text-luxury-brown mb-2">Create Account</h1>
           <p className="text-luxury-brown/60">Join the G-MART family</p>
         </div>
-        <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+        <div className="space-y-5">
           <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="First Name" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-            <input type="text" placeholder="Last Name" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+            <input type="text" placeholder="First Name" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
+            <input type="text" placeholder="Last Name" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
           </div>
-          <input type="email" placeholder="Email" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
+          <input type="email" placeholder="Email" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
           <input type="tel" placeholder="Phone" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
-          <input type="password" placeholder="Password" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" required />
-          <button type="submit" className="btn-primary w-full">Create Account</button>
-        </form>
+          <input type="password" placeholder="Password" className="w-full p-3 border border-luxury-gold/20 bg-white focus:outline-none focus:border-luxury-gold" />
+          <button className="btn-primary w-full">Create Account</button>
+        </div>
         <p className="text-center text-sm text-luxury-brown/60 mt-6">
           Already have an account?{" "}
           <Link href="/auth/login" className="text-luxury-gold hover:underline">Sign In</Link>

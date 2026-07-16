@@ -58,8 +58,15 @@ export default function ProductDetailPage({
 
           <div className="flex items-center gap-2 mb-6">
             <div className="flex text-luxury-gold">
-              {"★".repeat(Math.floor(product.rating))}
-              {"☆".repeat(5 - Math.floor(product.rating))}
+              {Array.from({ length: 5 }, (_, i) => {
+                const filled = product.rating >= i + 1;
+                const half = !filled && product.rating >= i + 0.5;
+                return (
+                  <span key={i}>
+                    {filled ? "★" : half ? "⯨" : "☆"}
+                  </span>
+                );
+              })}
             </div>
             <span className="text-sm text-luxury-brown/60">
               ({product.reviewCount} reviews)
@@ -91,7 +98,9 @@ export default function ProductDetailPage({
             )}
           </div>
 
-          <AddToCartButton product={product} />
+          <div className="flex items-center gap-4">
+            <AddToCartButton product={product} />
+          </div>
         </div>
       </div>
 
