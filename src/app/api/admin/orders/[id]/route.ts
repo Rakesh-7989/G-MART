@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getApiSupabase } from "@/lib/supabase";
 
 export async function PUT(
   request: NextRequest,
@@ -12,7 +7,7 @@ export async function PUT(
 ) {
   try {
     const { status } = await request.json();
-    const { data, error } = await supabase
+    const { data, error } = await getApiSupabase()
       .from("orders")
       .update({ status })
       .eq("id", params.id)

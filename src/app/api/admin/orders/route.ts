@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getApiSupabase } from "@/lib/supabase";
 
 export async function GET() {
-  const { data, error } = await supabase
+  const { data, error } = await getApiSupabase()
     .from("orders")
     .select("*, order_items(*)")
     .order("created_at", { ascending: false });

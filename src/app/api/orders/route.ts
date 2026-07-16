@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getApiSupabase } from "@/lib/supabase";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +10,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await getApiSupabase()
       .from("orders")
       .insert({
         customer_name: customer.name,
@@ -42,7 +37,7 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    const { error: itemsError } = await supabase
+    const { error: itemsError } = await getApiSupabase()
       .from("order_items")
       .insert(orderItems);
 

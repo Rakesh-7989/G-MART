@@ -1,10 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { getApiSupabase } from "@/lib/supabase";
 
 export async function GET(request: NextRequest) {
   const token = request.headers.get("authorization")?.replace("Bearer ", "");
@@ -12,7 +7,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ user: null });
   }
 
-  const { data, error } = await supabase.auth.getUser(token);
+  const { data, error } = await getApiSupabase().auth.getUser(token);
   if (error || !data.user) {
     return NextResponse.json({ user: null });
   }
