@@ -4,14 +4,19 @@ export const dynamic = "force-dynamic";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { CartItem } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import { placeOrder } from "@/lib/api";
+import CashfreeCheckout from "@/components/CashfreeCheckout";
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
-  const [placed, setPlaced] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [orderId, setOrderId] = useState<string | null>(null);
+  const [placing, setPlacing] = useState(false);
   const [form, setForm] = useState({
     firstName: "", lastName: "", email: "", phone: "",
     line1: "", line2: "", city: "", state: "", pincode: "",
@@ -33,6 +38,8 @@ export default function CheckoutPage() {
 
   async function handlePlaceOrder(e: React.FormEvent) {
     e.preventDefault();
+    setPlacing(true);
+
     const result = await placeOrder({
       items: items.map((i) => ({
         productId: i.productId,
@@ -46,14 +53,24 @@ export default function CheckoutPage() {
         city: form.city, state: form.state, pincode: form.pincode,
       },
       customer: { name: `${form.firstName} ${form.lastName}`, email: form.email, phone: form.phone },
-      paymentMethod: "cod",
+      paymentMethod,
     });
-    if (result.success) {
-      localStorage.removeItem("cart");
-      window.dispatchEvent(new Event("cartUpdated"));
-      setPlaced(true);
-    } else {
+
+    setPlacing(false);
+
+    if (!result.success) {
       alert("Failed to place order. Please try again.");
+      return;
+    }
+
+    const createdOrderId = result.order?.id;
+    localStorage.removeItem("cart");
+    window.dispatchEvent(new Event("cartUpdated"));
+
+    if (paymentMethod === "cod") {
+      router.push(`/order/${createdOrderId}`);
+    } else {
+      setOrderId(createdOrderId);
     }
   }
 
@@ -62,17 +79,6 @@ export default function CheckoutPage() {
   }
 
   if (!mounted) return null;
-
-  if (placed) {
-    return (
-      <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-        <div className="text-6xl mb-6">✓</div>
-        <h1 className="font-serif text-3xl text-luxury-brown mb-4">Order Placed Successfully!</h1>
-        <p className="text-luxury-brown/60 mb-8">Thank you for shopping at G-MART. Your order will be delivered soon.</p>
-        <Link href="/products" className="btn-primary">Continue Shopping</Link>
-      </div>
-    );
-  }
 
   if (items.length === 0) {
     return (
@@ -107,16 +113,37 @@ export default function CheckoutPage() {
 
             <h2 className="font-serif text-xl text-luxury-brown mt-8 mb-4">Payment Method</h2>
             <label className="flex items-center gap-3 p-4 border border-luxury-gold/20 bg-white cursor-pointer">
-              <input type="radio" name="payment" defaultChecked className="accent-luxury-gold" />
+              <input type="radio" name="payment" value="cod" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="accent-luxury-gold" />
               <div>
                 <p className="font-medium text-luxury-brown">Cash on Delivery</p>
                 <p className="text-sm text-luxury-brown/60">Pay when your order arrives</p>
               </div>
             </label>
+            <label className="flex items-center gap-3 p-4 border border-luxury-gold/20 bg-white cursor-pointer">
+              <input type="radio" name="payment" value="cashfree" checked={paymentMethod === "cashfree"} onChange={() => setPaymentMethod("cashfree")} className="accent-luxury-gold" />
+              <div>
+                <p className="font-medium text-luxury-brown">Pay Online</p>
+                <p className="text-sm text-luxury-brown/60">Credit/Debit Card, UPI, Net Banking (via Cashfree)</p>
+              </div>
+            </label>
 
-            <button type="submit" className="btn-primary w-full mt-8">
-              Place Order — {formatPrice(subtotal)}
-            </button>
+            {orderId && paymentMethod === "cashfree" ? (
+              <CashfreeCheckout
+                orderId={orderId}
+                amount={subtotal}
+                customer={{
+                  name: `${form.firstName} ${form.lastName}`,
+                  email: form.email,
+                  phone: form.phone,
+                }}
+                onSuccess={() => router.push(`/order/${orderId}`)}
+                onError={() => alert("Payment failed. Please try again.")}
+              />
+            ) : (
+              <button type="submit" disabled={placing} className="btn-primary w-full mt-8 disabled:opacity-50">
+                {placing ? "Placing Order..." : `Place Order — ${formatPrice(subtotal)}`}
+              </button>
+            )}
           </form>
         </div>
 
