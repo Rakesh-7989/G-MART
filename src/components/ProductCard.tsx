@@ -17,7 +17,7 @@ export default function ProductCard({ product }: { product: Product }) {
           className="object-cover group-hover:scale-105 transition-transform duration-700"
           sizes="(max-width: 768px) 100vw, 25vw"
         />
-        {product.compareAtPrice && (
+        {product.compare_at_price && (
           <span className="absolute top-4 left-4 bg-luxury-gold text-white text-xs px-3 py-1 uppercase tracking-wider">
             Sale
           </span>
@@ -26,14 +26,14 @@ export default function ProductCard({ product }: { product: Product }) {
       <h3 className="font-serif text-lg text-luxury-brown group-hover:text-luxury-gold transition-colors">
         {product.name}
       </h3>
-      <p className="text-luxury-brown/60 text-sm mt-1">{product.category}</p>
+      <p className="text-luxury-brown/60 text-sm mt-1">{product.category?.name || ""}</p>
       <div className="flex items-center gap-3 mt-2">
         <span className="font-medium text-luxury-brown">
           {formatPrice(product.price)}
         </span>
-        {product.compareAtPrice && (
+        {product.compare_at_price && (
           <span className="text-luxury-brown/40 line-through text-sm">
-            {formatPrice(product.compareAtPrice)}
+            {formatPrice(product.compare_at_price)}
           </span>
         )}
       </div>

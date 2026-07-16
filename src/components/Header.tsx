@@ -3,8 +3,16 @@
 import Link from "next/link";
 import { ShoppingBag, Search, Menu, X, User } from "lucide-react";
 import { useState, useEffect } from "react";
-import { categories } from "@/lib/data";
 import { CartItem } from "@/lib/types";
+
+const NAV_CATEGORIES = [
+  { name: "Living Room", slug: "living-room" },
+  { name: "Dining", slug: "dining" },
+  { name: "Bedroom", slug: "bedroom" },
+  { name: "Office", slug: "office" },
+  { name: "Storage", slug: "storage" },
+  { name: "Decor", slug: "decor" },
+];
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,10 +44,16 @@ export default function Header() {
           </Link>
 
           <nav className="hidden lg:flex items-center gap-8">
-            {categories.slice(0, 6).map((cat) => (
+            <Link
+              href="/products"
+              className="text-sm uppercase tracking-widest text-luxury-brown/80 hover:text-luxury-gold transition-colors"
+            >
+              All
+            </Link>
+            {NAV_CATEGORIES.map((cat) => (
               <Link
                 key={cat.slug}
-                href={cat.slug === "all" ? "/products" : `/products?category=${cat.slug}`}
+                href={`/products?category=${cat.slug}`}
                 className="text-sm uppercase tracking-widest text-luxury-brown/80 hover:text-luxury-gold transition-colors"
               >
                 {cat.name}
@@ -69,10 +83,17 @@ export default function Header() {
       {menuOpen && (
         <div className="lg:hidden border-t border-luxury-gold/20 bg-white">
           <nav className="flex flex-col p-4 gap-4">
-            {categories.map((cat) => (
+            <Link
+              href="/products"
+              className="text-sm uppercase tracking-widest text-luxury-brown/80 hover:text-luxury-gold transition-colors"
+              onClick={() => setMenuOpen(false)}
+            >
+              All
+            </Link>
+            {NAV_CATEGORIES.map((cat) => (
               <Link
                 key={cat.slug}
-                href={cat.slug === "all" ? "/products" : `/products?category=${cat.slug}`}
+                href={`/products?category=${cat.slug}`}
                 className="text-sm uppercase tracking-widest text-luxury-brown/80 hover:text-luxury-gold transition-colors"
                 onClick={() => setMenuOpen(false)}
               >

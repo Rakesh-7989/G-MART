@@ -1,16 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getProductBySlug, getFeaturedProducts } from "@/lib/data";
+import { getProductBySlug, getFeaturedProducts } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
 import AddToCartButton from "@/components/AddToCartButton";
 import ProductCard from "@/components/ProductCard";
 
-export default function ProductDetailPage({
+export default async function ProductDetailPage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const product = getProductBySlug(params.slug);
+  const product = await getProductBySlug(params.slug);
 
   if (!product) {
     return (
@@ -21,7 +21,9 @@ export default function ProductDetailPage({
     );
   }
 
-  const related = getFeaturedProducts().filter((p) => p.id !== product.id).slice(0, 4);
+  const related = (await getFeaturedProducts())
+    .filter((p) => p.id !== product.id)
+    .slice(0, 4);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
@@ -39,7 +41,7 @@ export default function ProductDetailPage({
 
         <div className="flex flex-col justify-center">
           <p className="text-luxury-gold uppercase tracking-[0.2em] text-sm mb-3">
-            {product.category}
+            {product.category?.name || ""}
           </p>
           <h1 className="font-serif text-4xl text-luxury-brown mb-4">
             {product.name}
@@ -49,9 +51,9 @@ export default function ProductDetailPage({
             <span className="text-3xl font-serif text-luxury-brown">
               {formatPrice(product.price)}
             </span>
-            {product.compareAtPrice && (
+            {product.compare_at_price && (
               <span className="text-xl text-luxury-brown/40 line-through">
-                {formatPrice(product.compareAtPrice)}
+                {formatPrice(product.compare_at_price)}
               </span>
             )}
           </div>
@@ -69,7 +71,7 @@ export default function ProductDetailPage({
               })}
             </div>
             <span className="text-sm text-luxury-brown/60">
-              ({product.reviewCount} reviews)
+              ({product.review_count} reviews)
             </span>
           </div>
 

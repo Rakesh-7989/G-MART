@@ -4,17 +4,18 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
-  compareAtPrice?: number;
+  compare_at_price?: number | null;
   images: string[];
-  category: string;
-  subcategory?: string;
-  material?: string;
-  dimensions?: string;
-  color?: string;
-  inStock: boolean;
+  category: { name: string; slug: string };
+  category_id: string;
+  material?: string | null;
+  dimensions?: string | null;
+  color?: string | null;
+  in_stock: boolean;
   featured?: boolean;
   rating: number;
-  reviewCount: number;
+  review_count: number;
+  created_at?: string;
 }
 
 export interface CartItem {
@@ -26,11 +27,9 @@ export interface CartItem {
 }
 
 export interface Customer {
-  id: string;
   name: string;
   email: string;
   phone?: string;
-  address?: Address;
 }
 
 export interface Address {
@@ -43,12 +42,14 @@ export interface Address {
 
 export interface Order {
   id: string;
-  customerId: string;
+  customer_name: string;
+  customer_email: string;
+  customer_phone?: string;
   items: CartItem[];
   total: number;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
-  paymentMethod: "cod" | "cashfree";
-  paymentStatus: "pending" | "paid" | "failed";
-  shippingAddress: Address;
-  createdAt: string;
+  payment_method: "cod" | "cashfree";
+  payment_status: "pending" | "paid" | "failed";
+  shipping_address: Address;
+  created_at: string;
 }

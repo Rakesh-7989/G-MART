@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { CartItem } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
+import { placeOrder } from "@/lib/api";
 
 export default function CheckoutPage() {
   const [items, setItems] = useState<CartItem[]>([]);
@@ -30,11 +31,15 @@ export default function CheckoutPage() {
 
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  function handlePlaceOrder(e: React.FormEvent) {
+  async function handlePlaceOrder(e: React.FormEvent) {
     e.preventDefault();
-    const order = {
-      id: "ORD-" + Date.now(),
-      items,
+    const result = await placeOrder({
+      items: items.map((i) => ({
+        productId: i.productId,
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+      })),
       total: subtotal,
       shippingAddress: {
         line1: form.line1, line2: form.line2,
@@ -42,13 +47,14 @@ export default function CheckoutPage() {
       },
       customer: { name: `${form.firstName} ${form.lastName}`, email: form.email, phone: form.phone },
       paymentMethod: "cod",
-      status: "pending",
-      createdAt: new Date().toISOString(),
-    };
-    console.log("Order placed:", order);
-    localStorage.removeItem("cart");
-    window.dispatchEvent(new Event("cartUpdated"));
-    setPlaced(true);
+    });
+    if (result.success) {
+      localStorage.removeItem("cart");
+      window.dispatchEvent(new Event("cartUpdated"));
+      setPlaced(true);
+    } else {
+      alert("Failed to place order. Please try again.");
+    }
   }
 
   function updateField(field: string, value: string) {

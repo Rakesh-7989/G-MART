@@ -1,19 +1,17 @@
 import Link from "next/link";
-import { products, categories } from "@/lib/data";
+import { getProducts, getCategories } from "@/lib/api";
 import ProductCard from "@/components/ProductCard";
 
-export default function ProductsPage({
+export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: { category?: string };
 }) {
   const activeCategory = searchParams.category || "all";
-  const filtered =
-    activeCategory === "all"
-      ? products
-      : products.filter(
-          (p) => p.category.toLowerCase().replace(/\s+/g, "-") === activeCategory
-        );
+  const [products, categories] = await Promise.all([
+    getProducts(activeCategory),
+    getCategories(),
+  ]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
@@ -23,10 +21,21 @@ export default function ProductsPage({
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 mb-12">
+        <Link
+          key="all"
+          href="/products"
+          className={`px-6 py-2 text-sm uppercase tracking-wider transition-colors ${
+            activeCategory === "all"
+              ? "bg-luxury-gold text-white"
+              : "border border-luxury-gold/30 text-luxury-brown hover:bg-luxury-gold/10"
+          }`}
+        >
+          All
+        </Link>
         {categories.map((cat) => (
           <Link
             key={cat.slug}
-            href={cat.slug === "all" ? "/products" : `/products?category=${cat.slug}`}
+            href={`/products?category=${cat.slug}`}
             className={`px-6 py-2 text-sm uppercase tracking-wider transition-colors ${
               activeCategory === cat.slug
                 ? "bg-luxury-gold text-white"
@@ -38,11 +47,11 @@ export default function ProductsPage({
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {products.length === 0 ? (
         <p className="text-center text-luxury-brown/60 py-20">No products found in this category.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {filtered.map((product) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
