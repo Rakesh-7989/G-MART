@@ -47,7 +47,7 @@ export async function sendOrderConfirmation(order: {
         <tbody>${itemsHtml}</tbody>
         <tfoot><tr><td colspan="2" style="padding:8px 12px;text-align:right;font-weight:600">Total</td><td style="padding:8px 12px;text-align:right;font-weight:600">₹${order.total.toLocaleString("en-IN")}</td></tr></tfoot>
       </table>
-      <p style="color:#555;margin:0 0 8px"><strong>Payment:</strong> ${order.payment_method === "cashfree" ? "Online (Paid)" : "Cash on Delivery"}</p>
+      <p style="color:#555;margin:0 0 8px"><strong>Payment:</strong> ${order.payment_method === "emi" ? "EMI (Credit Card)" : order.payment_method === "cashfree" ? "Online (Paid)" : "Cash on Delivery"}</p>
       <p style="color:#555;margin:0 0 8px"><strong>Shipping to:</strong> ${addrHtml}</p>
       <p style="color:#555;margin:24px 0 8px">We'll notify you when your order ships.</p>
       <hr style="border:none;border-top:1px solid #eee;margin:24px 0">

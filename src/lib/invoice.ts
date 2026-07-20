@@ -116,7 +116,7 @@ export function generateInvoiceBuffer(order: {
           ]},
           { width: "50%", stack: [
             { text: "Payment", style: "label" },
-            { text: order.payment_method === "cashfree" ? "Online" : "Cash on Delivery", margin: [0, 2, 0, 0] },
+            { text: order.payment_method === "emi" ? "EMI (Credit Card)" : order.payment_method === "cashfree" ? "Online" : "Cash on Delivery", margin: [0, 2, 0, 0] },
           ]},
         ],
         margin: [0, 0, 0, 20],

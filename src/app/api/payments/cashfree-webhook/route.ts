@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = JSON.parse(rawBody);
-    const { order_id, order_status } = body;
+    const { order_id, order_status, payment_method, payment_group } = body;
 
     if (!order_id) {
       return NextResponse.json({ error: "Missing order_id" }, { status: 400 });
@@ -30,12 +30,29 @@ export async function POST(request: NextRequest) {
 
     const paymentStatus = order_status === "PAID" ? "paid" : "failed";
 
+    // Extract EMI-specific data if the payment was made via EMI
+    const paymentData: Record<string, any> = {};
+    if (payment_group === "emi" || payment_method === "emi") {
+      paymentData.payment_group = payment_group || "emi";
+      paymentData.payment_method = payment_method;
+      if (body.emi_tenure) paymentData.emi_tenure = body.emi_tenure;
+      if (body.emi_amount) paymentData.emi_amount = body.emi_amount;
+      if (body.emi_bank_name) paymentData.emi_bank_name = body.emi_bank_name;
+      if (body.emi_monthly_amount) paymentData.emi_monthly_amount = body.emi_monthly_amount;
+    }
+
+    const updateData: Record<string, any> = {
+      payment_status: paymentStatus,
+      status: paymentStatus === "paid" ? "confirmed" : "cancelled",
+    };
+
+    if (Object.keys(paymentData).length > 0) {
+      updateData.payment_data = paymentData;
+    }
+
     await getApiSupabase()
       .from("orders")
-      .update({
-        payment_status: paymentStatus,
-        status: paymentStatus === "paid" ? "confirmed" : "cancelled",
-      })
+      .update(updateData)
       .eq("id", order_id);
 
     const { data: order } = await getApiSupabase()

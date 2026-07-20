@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { orderId, orderAmount, customer } = await request.json();
+    const { orderId, orderAmount, customer, paymentMethod } = await request.json();
 
     if (!orderId || !orderAmount || !customer) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -28,6 +28,27 @@ export async function POST(request: NextRequest) {
         ? "https://api.cashfree.com/pg/orders"
         : "https://sandbox.cashfree.com/pg/orders";
 
+    const orderPayload: Record<string, any> = {
+      order_id: orderId,
+      order_amount: orderAmount / 100,
+      order_currency: "INR",
+      customer_details: {
+        customer_id: customer.email.replace(/[^a-zA-Z0-9]/g, "_"),
+        customer_name: customer.name,
+        customer_email: customer.email,
+        customer_phone: customer.phone || "9999999999",
+      },
+      order_meta: {
+        return_url: `${process.env.NEXT_PUBLIC_BASE_URL || ""}/order/${orderId}?payment_status=completed`,
+      },
+    };
+
+    // When EMI is selected, restrict payment methods to EMI
+    if (paymentMethod === "emi") {
+      orderPayload.order_tags = { payment_method: "emi" };
+      orderPayload.payment_methods = "emi";
+    }
+
     const cashfreeRes = await fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -36,20 +57,7 @@ export async function POST(request: NextRequest) {
         "x-client-secret": secretKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        order_id: orderId,
-        order_amount: orderAmount / 100,
-        order_currency: "INR",
-        customer_details: {
-          customer_id: customer.email.replace(/[^a-zA-Z0-9]/g, "_"),
-          customer_name: customer.name,
-          customer_email: customer.email,
-          customer_phone: customer.phone || "9999999999",
-        },
-        order_meta: {
-          return_url: `${process.env.NEXT_PUBLIC_BASE_URL || ""}/order/${orderId}?payment_status=completed`,
-        },
-      }),
+      body: JSON.stringify(orderPayload),
     });
 
     const data = await cashfreeRes.json();

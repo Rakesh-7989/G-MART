@@ -59,6 +59,15 @@ export interface Address {
   pincode: string;
 }
 
+export interface PaymentData {
+  emi_tenure?: number;
+  emi_amount?: number;
+  emi_bank_name?: string;
+  emi_monthly_amount?: number;
+  payment_method?: string;
+  payment_group?: string;
+}
+
 export interface Order {
   id: string;
   customer_name: string;
@@ -67,8 +76,9 @@ export interface Order {
   items: CartItem[];
   total: number;
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
-  payment_method: "cod" | "cashfree";
+  payment_method: "cod" | "cashfree" | "emi";
   payment_status: "pending" | "paid" | "failed";
+  payment_data?: PaymentData | null;
   shipping_address: Address;
   created_at: string;
 }

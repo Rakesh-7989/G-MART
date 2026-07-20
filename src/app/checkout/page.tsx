@@ -170,8 +170,15 @@ export default function CheckoutPage() {
                 <p className="text-sm text-muted">Credit/Debit Card, UPI, Net Banking (via Cashfree)</p>
               </div>
             </label>
+            <label className="flex items-center gap-3 p-4 border border-line bg-white cursor-pointer">
+              <input type="radio" name="payment" value="emi" checked={paymentMethod === "emi"} onChange={() => setPaymentMethod("emi")} className="accent-terracotta" />
+              <div>
+                <p className="font-medium text-ink">EMI (Credit Card)</p>
+                <p className="text-sm text-muted">Pay in easy monthly installments</p>
+              </div>
+            </label>
 
-            {orderId && paymentMethod === "cashfree" ? (
+            {orderId && (paymentMethod === "cashfree" || paymentMethod === "emi") ? (
               <CashfreeCheckout
                 orderId={orderId}
                 amount={total}
@@ -180,6 +187,7 @@ export default function CheckoutPage() {
                   email: form.email,
                   phone: form.phone,
                 }}
+                paymentMethod={paymentMethod}
                 onSuccess={() => router.push(`/order/${orderId}`)}
                 onError={() => alert("Payment failed. Please try again.")}
               />

@@ -74,6 +74,25 @@ export default function OrderConfirmationPage() {
             <span>Total</span>
             <span>{formatPrice(order.total)}</span>
           </div>
+          <div className="flex justify-between text-xs text-muted mt-1">
+            <span>Payment</span>
+            <span className="font-medium text-ink">
+              {order.payment_method === "emi" ? "EMI" : order.payment_method === "cashfree" ? "Online" : "COD"}
+            </span>
+          </div>
+          {order.payment_method === "emi" && order.payment_data && (
+            <div className="bg-purple-50 border border-purple-200 p-3 mt-3 text-xs text-purple-800">
+              {order.payment_data.emi_tenure && (
+                <p>Tenure: <strong>{order.payment_data.emi_tenure} months</strong></p>
+              )}
+              {order.payment_data.emi_bank_name && (
+                <p>Bank: <strong>{order.payment_data.emi_bank_name}</strong></p>
+              )}
+              {order.payment_data.emi_monthly_amount && (
+                <p>Monthly: <strong>{formatPrice(order.payment_data.emi_monthly_amount)}</strong></p>
+              )}
+            </div>
+          )}
           {order.coupon_code && (
             <div className="flex justify-between text-xs text-muted mt-2">
               <span>Coupon: {order.coupon_code}</span>

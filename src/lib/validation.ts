@@ -91,7 +91,7 @@ export const orderSchema = z.object({
     state: z.string().min(1, "State is required"),
     pincode: z.string().min(4, "Valid pincode required"),
   }),
-  paymentMethod: z.enum(["cod", "cashfree"]).default("cod"),
+  paymentMethod: z.enum(["cod", "cashfree", "emi"]).default("cod"),
   total: z.number().positive("Total must be positive"),
   couponCode: z.string().optional().nullable(),
   discount: z.number().int().min(0).default(0),

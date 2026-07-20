@@ -98,6 +98,7 @@ export default function OrderManager({ token }: OrderManagerProps) {
           <option value="all">All Payments</option>
           <option value="cod">COD</option>
           <option value="cashfree">Cashfree</option>
+          <option value="emi">EMI</option>
         </select>
       </div>
 
@@ -137,9 +138,9 @@ export default function OrderManager({ token }: OrderManagerProps) {
                   <td className="px-4 py-3 text-ink font-medium">{formatPrice(order.total)}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-0.5 ${
-                      order.payment_method === "cashfree" ? "bg-blue-100 text-blue-700" : "bg-gray-100 text-gray-700"
+                      order.payment_method === "cashfree" ? "bg-blue-100 text-blue-700" : order.payment_method === "emi" ? "bg-purple-100 text-purple-700" : "bg-gray-100 text-gray-700"
                     }`}>
-                      {order.payment_method}
+                      {order.payment_method.toUpperCase()}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-xs">

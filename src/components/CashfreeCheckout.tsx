@@ -16,6 +16,7 @@ interface CashfreeCheckoutProps {
   orderId: string;
   amount: number;
   customer: { name: string; email: string; phone?: string };
+  paymentMethod?: string;
   onSuccess: () => void;
   onError: () => void;
 }
@@ -24,6 +25,7 @@ export default function CashfreeCheckout({
   orderId,
   amount,
   customer,
+  paymentMethod,
   onSuccess,
   onError,
 }: CashfreeCheckoutProps) {
@@ -35,7 +37,7 @@ export default function CashfreeCheckout({
     const res = await fetch("/api/payments/cashfree-session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId, orderAmount: amount, customer }),
+      body: JSON.stringify({ orderId, orderAmount: amount, customer, paymentMethod }),
     });
 
     const data = await res.json();
@@ -63,7 +65,7 @@ export default function CashfreeCheckout({
       disabled={loading}
       className="btn-primary w-full disabled:opacity-50"
     >
-      {loading ? "Connecting to Payment Gateway..." : `Pay ₹${(amount / 100).toLocaleString("en-IN")}`}
+      {loading ? "Connecting to Payment Gateway..." : `Pay \u20B9${(amount / 100).toLocaleString("en-IN")}`}
     </button>
   );
 }
