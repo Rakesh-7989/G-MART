@@ -10,9 +10,11 @@ import { formatPrice } from "@/lib/utils";
 import { placeOrder } from "@/lib/api";
 import CashfreeCheckout from "@/components/CashfreeCheckout";
 import { ShieldIcon, TruckIcon, CreditCardIcon } from "@/components/icons";
+import { useToast } from "@/components/Toast";
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("cod");
@@ -100,7 +102,7 @@ export default function CheckoutPage() {
     setPlacing(false);
 
     if (!result.success) {
-      alert("Failed to place order. Please try again.");
+      showToast("Failed to place order. Please try again.", "error");
       return;
     }
 
@@ -189,7 +191,7 @@ export default function CheckoutPage() {
                 }}
                 paymentMethod={paymentMethod}
                 onSuccess={() => router.push(`/order/${orderId}`)}
-                onError={() => alert("Payment failed. Please try again.")}
+                onError={() => showToast("Payment failed. Please try again.", "error")}
               />
             ) : (
               <button type="submit" disabled={placing} className="btn-primary w-full mt-8 disabled:opacity-50">

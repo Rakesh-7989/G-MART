@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import CookieBanner from "@/components/CookieBanner";
+import { ToastProvider } from "@/components/Toast";
 import { AuthProvider } from "@/lib/auth";
 import { WishlistProvider } from "@/lib/wishlist";
 import Script from "next/script";
@@ -113,11 +114,13 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <AuthProvider>
           <WishlistProvider>
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
-            <WhatsAppWidget />
-            <CookieBanner />
+            <ToastProvider>
+              <Header />
+              <main className="flex-1">{children}</main>
+              <Footer />
+              <WhatsAppWidget />
+              <CookieBanner />
+            </ToastProvider>
           </WishlistProvider>
         </AuthProvider>
         <Script

@@ -53,6 +53,15 @@
     100% { transform: translateX(-50%); }
   }
 
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
   .skeleton {
     background: linear-gradient(90deg, #efefef 25%, #f5f5f5 50%, #efefef 75%);
     background-size: 200% 100%;

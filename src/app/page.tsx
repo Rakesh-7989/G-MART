@@ -212,7 +212,7 @@ export default async function HomePage() {
       <section className="py-16 bg-terracotta">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <p className="text-white/80 uppercase tracking-wider text-xs mb-3 font-medium">
-            Design notes
+            Stay Connected
           </p>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Stay Inspired With G-MART

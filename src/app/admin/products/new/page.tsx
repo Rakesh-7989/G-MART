@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/Toast";
 
 export default function NewProductPage() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [categories, setCategories] = useState<any[]>([]);
   const [form, setForm] = useState({
     name: "", slug: "", description: "", price: "", compare_at_price: "",
@@ -35,7 +37,7 @@ export default function NewProductPage() {
     if (res.ok) {
       router.push("/admin");
     } else {
-      alert("Failed to create product");
+      showToast("Failed to create product", "error");
     }
   }
 
