@@ -1,9 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApiSupabase } from "@/lib/supabase";
+import { sendOrderStatusUpdate } from "@/lib/email";
+import crypto from "crypto";
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const rawBody = await request.text();
+
+    const signature = request.headers.get("x-webhook-signature");
+    const secret = process.env.CASHFREE_SECRET_KEY;
+
+    if (secret && signature) {
+      const expected = crypto
+        .createHmac("sha256", secret)
+        .update(rawBody)
+        .digest("base64");
+
+      if (signature !== expected) {
+        return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+      }
+    }
+
+    const body = JSON.parse(rawBody);
     const { order_id, order_status } = body;
 
     if (!order_id) {
@@ -19,6 +37,21 @@ export async function POST(request: NextRequest) {
         status: paymentStatus === "paid" ? "confirmed" : "cancelled",
       })
       .eq("id", order_id);
+
+    const { data: order } = await getApiSupabase()
+      .from("orders")
+      .select("customer_name, customer_email")
+      .eq("id", order_id)
+      .single();
+
+    if (order) {
+      sendOrderStatusUpdate({
+        id: order_id,
+        customer_name: order.customer_name || "Customer",
+        customer_email: order.customer_email,
+        status: paymentStatus === "paid" ? "confirmed" : "cancelled",
+      }).catch(() => {});
+    }
 
     return NextResponse.json({ success: true });
   } catch {

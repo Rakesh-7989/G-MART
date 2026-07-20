@@ -15,6 +15,8 @@ interface AuthContext {
   signIn: (email: string, password: string) => Promise<string | null>;
   signUp: (email: string, password: string, name?: string, phone?: string) => Promise<string | null>;
   signOut: () => Promise<void>;
+  forgotPassword: (email: string) => Promise<string | null>;
+  resetPassword: (password: string) => Promise<string | null>;
 }
 
 const AuthCtx = createContext<AuthContext>({
@@ -23,6 +25,8 @@ const AuthCtx = createContext<AuthContext>({
   signIn: async () => null,
   signUp: async () => null,
   signOut: async () => {},
+  forgotPassword: async () => null,
+  resetPassword: async () => null,
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -90,8 +94,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }
 
+  async function forgotPassword(email: string): Promise<string | null> {
+    const res = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    return data.error || null;
+  }
+
+  async function resetPassword(password: string): Promise<string | null> {
+    const token = localStorage.getItem("gmart_token");
+    const res = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ password }),
+    });
+    const data = await res.json();
+    return data.error || null;
+  }
+
   return (
-    <AuthCtx.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthCtx.Provider value={{ user, loading, signIn, signUp, signOut, forgotPassword, resetPassword }}>
       {children}
     </AuthCtx.Provider>
   );

@@ -15,15 +15,34 @@ export interface Product {
   featured?: boolean;
   rating: number;
   review_count: number;
+  sku?: string | null;
   created_at?: string;
+  variants?: ProductVariant[];
+  product_variants?: ProductVariant[];
+}
+
+export interface ProductVariant {
+  id: string;
+  product_id: string;
+  name: string;
+  color_hex?: string | null | undefined;
+  sku?: string | null | undefined;
+  price?: number | null | undefined;
+  compare_at_price?: number | null | undefined;
+  stock_quantity: number;
+  image?: string | null | undefined;
+  is_default: boolean;
+  sort_order: number;
 }
 
 export interface CartItem {
   productId: string;
+  variantId?: string;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  sku?: string;
 }
 
 export interface Customer {

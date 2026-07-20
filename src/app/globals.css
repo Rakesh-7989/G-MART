@@ -1,31 +1,105 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --terracotta: #cf542f;
+  --terracotta-dark: #a84227;
+  --gold: #d7a148;
+  --ink: #050505;
+  --muted: #686868;
+  --line: #e7e7e7;
+  --line-strong: #dedede;
+  --ivory: #ffffff;
+  --cream: #ffffff;
+  --button-primary-bg: #050505;
+  --button-primary-text: #ffffff;
+  --button-secondary-bg: #efefef;
+  --button-secondary-text: #050505;
+  --product-add-button-bg: #cf542f;
+  --product-add-button-text: #ffffff;
+  --product-buy-button-bg: #cf542f;
+  --product-whatsapp-button-bg: #31a844;
+  --product-whatsapp-button-text: #ffffff;
+  --badge-bg: #d7a148;
+  --badge-text: #2c211b;
+  --badge-soft-bg: #f7e4d8;
+  --badge-soft-text: #a84227;
+  --radius-card: 8px;
+  --radius-button: 32px;
+  --shadow-theme: 0 14px 34px rgba(82, 50, 29, 0.1);
+  --section-gap: 34px;
+  --product-card-media-ratio: 4 / 5;
+  --product-card-image-fit: contain;
+}
+
 @layer base {
   body {
-    @apply bg-cream text-luxury-dark font-sans antialiased;
+    @apply bg-white text-ink font-sans antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Georgia, serif;
+  }
+}
+
+@layer utilities {
+  .animate-scroll {
+    animation: scroll var(--announcement-speed, 80s) linear infinite;
+  }
+
+  @keyframes scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #efefef 25%, #f5f5f5 50%, #efefef 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: 4px;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-luxury-gold text-white px-8 py-3 font-medium tracking-wider
-           hover:bg-luxury-brown transition-colors duration-300 uppercase text-sm;
+    @apply bg-ink text-white px-8 py-3 font-semibold
+           hover:opacity-90 transition-opacity duration-300 text-sm;
+    border-radius: var(--radius-button);
+  }
+
+  .btn-secondary {
+    @apply bg-[#efefef] text-ink px-8 py-3 font-semibold
+           hover:opacity-80 transition-opacity duration-300 text-sm;
+    border-radius: var(--radius-button);
+  }
+
+  .btn-terracotta {
+    @apply bg-[var(--terracotta)] text-white px-8 py-3 font-semibold
+           hover:bg-[var(--terracotta-dark)] transition-colors duration-300 text-sm;
+    border-radius: var(--radius-button);
+  }
+
+  .btn-whatsapp {
+    @apply bg-[var(--product-whatsapp-button-bg)] text-white px-8 py-3 font-semibold
+           hover:opacity-90 transition-opacity duration-300 text-sm
+           border-2 border-[var(--product-whatsapp-button-bg)];
+    border-radius: var(--radius-button);
   }
 
   .btn-outline {
-    @apply border-2 border-luxury-gold text-luxury-gold px-8 py-3 font-medium tracking-wider
-           hover:bg-luxury-gold hover:text-white transition-colors duration-300 uppercase text-sm;
+    @apply border-2 border-ink text-ink px-8 py-3 font-semibold
+           hover:bg-ink hover:text-white transition-colors duration-300 text-sm;
+    border-radius: var(--radius-button);
   }
 
   .section-title {
-    @apply font-serif text-3xl md:text-4xl text-luxury-brown tracking-wide;
-  }
-
-  .gold-border {
-    @apply border-b-2 border-luxury-gold/30;
+    @apply text-3xl md:text-4xl text-ink font-bold tracking-tight;
+    font-family: var(--font-serif), Georgia, serif;
   }
 }

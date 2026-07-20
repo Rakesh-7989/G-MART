@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hrms-saas-rakesh-site-tracker-pro-s-projects.vercel.app/sitemap.xml

@@ -9,30 +9,34 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: "#fdf8f0",
-          100: "#f9edda",
-          200: "#f2d7b0",
-          300: "#e9bc7d",
-          400: "#e0a04e",
-          500: "#d4862e",
-          600: "#c46e23",
-          700: "#a3531f",
-          800: "#834221",
-          900: "#6a381d",
-          950: "#3a1b0d",
+        terracotta: {
+          DEFAULT: "#cf542f",
+          dark: "#a84227",
+          light: "#f7e4d8",
         },
-        cream: "#FFF8F0",
-        luxury: {
-          gold: "#C4A24E",
-          brown: "#5C3A21",
-          dark: "#1A0F0A",
-          cream: "#F5EDE0",
+        gold: {
+          DEFAULT: "#d7a148",
+          dark: "#2c211b",
         },
+        ink: "#050505",
+        muted: "#686868",
+        line: "#e7e7e7",
+        "line-strong": "#dedede",
+        whatsapp: "#31a844",
+        "card-bg": "#f3f3f3",
+        newsletter: "#c24f32",
+        "newsletter-text": "#fff7ee",
+        cream: "#ffffff",
       },
       fontFamily: {
-        serif: ["Playfair Display", "Georgia", "serif"],
-        sans: ["Inter", "system-ui", "sans-serif"],
+        sans: ["Helvetica", "Arial", "sans-serif"],
+      },
+      borderRadius: {
+        card: "8px",
+        button: "32px",
+      },
+      boxShadow: {
+        theme: "0 14px 34px rgba(82, 50, 29, .1)",
       },
     },
   },

@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApiSupabase } from "@/lib/supabase";
+import { validate, authSignupSchema } from "@/lib/validation";
+import { sendWelcomeEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name, phone } = await request.json();
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password required" }, { status: 400 });
-    }
+    const body = await request.json();
+    const validated = validate(authSignupSchema, body);
+    if ("error" in validated) return validated.error;
+    const { email, password, name, phone } = validated.data;
 
     const { data, error } = await getApiSupabase().auth.signUp({
       email,
@@ -29,6 +31,8 @@ export async function POST(request: NextRequest) {
         path: "/",
       });
     }
+
+    sendWelcomeEmail(email, name || "there").catch(() => {});
 
     return response;
   } catch {

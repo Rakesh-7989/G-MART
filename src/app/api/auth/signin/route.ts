@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getApiSupabase } from "@/lib/supabase";
+import { validate, authSigninSchema } from "@/lib/validation";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
-    if (!email || !password) {
-      return NextResponse.json({ error: "Email and password required" }, { status: 400 });
-    }
+    const body = await request.json();
+    const validated = validate(authSigninSchema, body);
+    if ("error" in validated) return validated.error;
 
+    const { email, password } = validated.data;
     const { data, error } = await getApiSupabase().auth.signInWithPassword({
       email,
       password,

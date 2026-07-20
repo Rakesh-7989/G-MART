@@ -9,6 +9,7 @@ export function middleware(request: NextRequest) {
 
   const isProtected = protectedRoutes.some((r) => path.startsWith(r));
   const isGuest = guestRoutes.some((r) => path.startsWith(r));
+  const isAdminPath = path.startsWith("/admin");
 
   if (isProtected && !token) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
@@ -18,9 +19,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/account", request.url));
   }
 
+  if (isAdminPath && !token) {
+    return NextResponse.redirect(new URL("/auth/login", request.url));
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/account/:path*", "/auth/login", "/auth/register"],
+  matcher: ["/account/:path*", "/auth/login", "/auth/register", "/admin/:path*"],
 };
