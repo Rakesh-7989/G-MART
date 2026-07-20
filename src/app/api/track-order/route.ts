@@ -9,16 +9,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Order ID and email are required" }, { status: 400 });
     }
 
-    const { data: order, error } = await getServiceRoleSupabase()
+    const normalizedEmail = email.toLowerCase().trim();
+    const supabase = getServiceRoleSupabase();
+
+    // First, try a simple query without relations
+    const { data: order, error } = await supabase
       .from("orders")
-      .select("*, order_items:order_items(*, product:products(name))")
+      .select("*")
       .eq("id", orderId)
-      .eq("customer_email", email.toLowerCase().trim())
+      .eq("customer_email", normalizedEmail)
       .single();
 
     if (error || !order) {
       console.error("Track order error:", error);
-      return NextResponse.json({ error: "Order not found. Check your order ID and email." }, { status: 404 });
+      return NextResponse.json({ 
+        error: "Order not found. Check your order ID and email.",
+        debug: { orderId, normalizedEmail, errorMessage: error?.message, errorCode: error?.code, hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY }
+      }, { status: 404 });
+    }
+
+    // Get order items separately
+    const { data: orderItems, error: itemsError } = await supabase
+      .from("order_items")
+      .select("*, product:products(name)")
+      .eq("order_id", orderId);
+
+    if (itemsError) {
+      console.error("Track order items error:", itemsError);
     }
 
     return NextResponse.json({
@@ -28,7 +45,7 @@ export async function POST(request: NextRequest) {
       created_at: order.created_at,
       tracking_number: order.tracking_number,
       tracking_url: order.tracking_url,
-      items: order.order_items?.map((item: any) => ({
+      items: orderItems?.map((item: any) => ({
         name: item.product?.name || "Product",
         quantity: item.quantity,
         price: item.price,
