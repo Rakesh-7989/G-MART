@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getApiSupabase } from "@/lib/supabase";
+import { getServiceRoleSupabase } from "@/lib/supabase";
 import { generateInvoiceBuffer } from "@/lib/invoice";
 
 export async function GET(
@@ -7,15 +7,24 @@ export async function GET(
   { params }: { params: { orderId: string } },
 ) {
   try {
-    const { data: order, error } = await getApiSupabase()
+    // Fetch order
+    const { data: order, error } = await getServiceRoleSupabase()
       .from("orders")
-      .select("*, order_items(*)")
+      .select("*")
       .eq("id", params.orderId)
       .single();
 
     if (error || !order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
+
+    // Fetch order items separately
+    const { data: orderItems } = await getServiceRoleSupabase()
+      .from("order_items")
+      .select("*")
+      .eq("order_id", params.orderId);
+
+    order.order_items = orderItems || [];
 
     const buffer = await generateInvoiceBuffer(order);
 

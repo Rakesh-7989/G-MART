@@ -1,32 +1,22 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const { default: PdfPrinter } = require("pdfmake/js/Printer");
-const pdfFonts = require("pdfmake/build/vfs_fonts");
 const pdfmake = require("pdfmake");
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pdfFonts = require("pdfmake/build/vfs_fonts");
 
-// Create a fresh virtual file system and populate it with font data
-const virtualfs = pdfmake.virtualfs;
-Object.keys(pdfFonts).forEach((font) => {
-  virtualfs.storage[font] = pdfFonts[font];
+const vfs = pdfmake.virtualfs;
+Object.keys(pdfFonts).forEach((fontName) => {
+  vfs.storage[fontName] = Buffer.from(pdfFonts[fontName], "base64");
 });
 
-// Create a fresh PdfPrinter instance with the virtual file system and fonts
-const printer = new PdfPrinter(
-  {
-    Roboto: {
-      normal: "Roboto-Regular.ttf",
-      bold: "Roboto-Medium.ttf",
-      italics: "Roboto-Italic.ttf",
-      bolditalics: "Roboto-MediumItalic.ttf",
-    },
+pdfmake.setFonts({
+  Roboto: {
+    normal: "Roboto-Regular.ttf",
+    bold: "Roboto-Medium.ttf",
+    italics: "Roboto-Italic.ttf",
+    bolditalics: "Roboto-MediumItalic.ttf",
   },
-  virtualfs,
-  {
-    resolve: (url: string) => url,
-    resolved: async () => {},
-  }
-);
+});
 
-// Register custom table layouts
 const tableLayouts = {
   lightHorizontalLines: {
     hLineWidth: (i: number) => (i === 0 || i === 1 ? 1 : 0.5),
@@ -38,6 +28,8 @@ const tableLayouts = {
     paddingBottom: 4,
   },
 };
+
+pdfmake.addTableLayouts(tableLayouts);
 
 export function generateInvoiceBuffer(order: {
   id: string;
@@ -58,22 +50,22 @@ export function generateInvoiceBuffer(order: {
     (idx + 1).toString(),
     i.product_name,
     i.quantity.toString(),
-    `₹ ${i.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
-    `₹ ${(i.price * i.quantity).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+    `\u20B9 ${i.price.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
+    `\u20B9 ${(i.price * i.quantity).toLocaleString("en-IN", { minimumFractionDigits: 2 })}`,
   ]);
 
   if (order.discount) {
     items.push([
       "", "", "",
       { text: "Discount", color: "#16a34a", alignment: "right" },
-      { text: `-₹ ${order.discount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, color: "#16a34a" },
+      { text: `-\u20B9 ${order.discount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, color: "#16a34a" },
     ]);
   }
 
   items.push([
     "", "", "",
     { text: "Total", bold: true, alignment: "right" },
-    { text: `₹ ${order.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, bold: true },
+    { text: `\u20B9 ${order.total.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`, bold: true },
   ]);
 
   const address = order.shipping_address || {};
@@ -156,15 +148,6 @@ export function generateInvoiceBuffer(order: {
     },
   };
 
-return (async () => {
-    const pdfDoc = await printer.createPdfKitDocument(doc, { tableLayouts: { lightHorizontalLines: tableLayouts.lightHorizontalLines } });
-    const chunks: Buffer[] = [];
-    pdfDoc.on("data", (chunk: Buffer) => chunks.push(chunk));
-    await new Promise((resolve, reject) => {
-      pdfDoc.on("end", resolve);
-      pdfDoc.on("error", reject);
-      pdfDoc.end();
-    });
-    return Buffer.concat(chunks);
-  })();
+  const pdfDoc = pdfmake.createPdf(doc);
+  return pdfDoc.getBuffer();
 }
