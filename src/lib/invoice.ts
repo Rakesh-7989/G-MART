@@ -17,19 +17,20 @@ pdfmake.setFonts({
   },
 });
 
-const tableLayouts = {
+pdfmake.addTableLayouts({
   lightHorizontalLines: {
-    hLineWidth: (i: number) => (i === 0 || i === 1 ? 1 : 0.5),
+    hLineWidth: (i: number, node: any) => {
+      if (i === 0 || i === node.table.body.length) return 0;
+      return i === node.table.headerRows ? 2 : 0.5;
+    },
     vLineWidth: () => 0,
     hLineColor: () => "#e5e5e5",
-    paddingLeft: 4,
-    paddingRight: 4,
-    paddingTop: 4,
-    paddingBottom: 4,
+    paddingLeft: (i: number, node: any) => (i === 0 ? 0 : 4),
+    paddingRight: (i: number, node: any) => (i === node.table.widths.length - 1 ? 0 : 4),
+    paddingTop: () => 4,
+    paddingBottom: () => 4,
   },
-};
-
-pdfmake.addTableLayouts(tableLayouts);
+});
 
 export function generateInvoiceBuffer(order: {
   id: string;
