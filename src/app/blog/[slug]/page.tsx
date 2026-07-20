@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getApiSupabase } from "@/lib/supabase";
@@ -22,8 +23,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <h1 className="text-3xl text-ink font-bold mb-4">{post.title}</h1>
       <p className="text-xs text-muted mb-8">{new Date(post.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}</p>
       {post.image && (
-        <div className="aspect-[16/9] bg-card-bg rounded-card overflow-hidden mb-8">
-          <div className="w-full h-full bg-cover bg-center" style={{ backgroundImage: `url(${post.image})` }} />
+        <div className="aspect-[16/9] bg-card-bg rounded-card overflow-hidden mb-8 relative">
+          <Image src={post.image} alt={post.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 720px" />
         </div>
       )}
       <div className="prose prose-sm max-w-none text-muted leading-relaxed whitespace-pre-wrap">

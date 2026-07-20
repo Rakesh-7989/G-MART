@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth";
 import { formatPrice } from "@/lib/utils";
 import { ShoppingBagIcon, DollarSignIcon, PackageIcon, UsersIcon, PlusIcon } from "@/components/icons";
-import RevenueChart from "@/components/admin/RevenueChart";
-import AnalyticsPanel from "@/components/admin/AnalyticsPanel";
-import OrderManager from "@/components/admin/OrderManager";
-import ProductManager from "@/components/admin/ProductManager";
-import CustomerList from "@/components/admin/CustomerList";
-import ReviewManager from "@/components/admin/ReviewManager";
-import CategoryManager from "@/components/admin/CategoryManager";
-import CouponManager from "@/components/admin/CouponManager";
-import ReturnManager from "@/components/admin/ReturnManager";
+
+const RevenueChart = dynamic(() => import("@/components/admin/RevenueChart"), { ssr: false });
+const AnalyticsPanel = dynamic(() => import("@/components/admin/AnalyticsPanel"), { ssr: false });
+const OrderManager = dynamic(() => import("@/components/admin/OrderManager"), { ssr: false });
+const ProductManager = dynamic(() => import("@/components/admin/ProductManager"), { ssr: false });
+const CustomerList = dynamic(() => import("@/components/admin/CustomerList"), { ssr: false });
+const ReviewManager = dynamic(() => import("@/components/admin/ReviewManager"), { ssr: false });
+const CategoryManager = dynamic(() => import("@/components/admin/CategoryManager"), { ssr: false });
+const CouponManager = dynamic(() => import("@/components/admin/CouponManager"), { ssr: false });
+const ReturnManager = dynamic(() => import("@/components/admin/ReturnManager"), { ssr: false });
 
 type AdminTab = "dashboard" | "products" | "orders" | "customers" | "reviews" | "categories" | "coupons" | "returns";
 

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getProducts, getCategories } from "@/lib/api";
@@ -52,11 +53,13 @@ export default async function ProductsPage({
     <div>
       {/* Collection Hero */}
       <div className="relative h-48 md:h-64 bg-ink overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{
-            backgroundImage: `url(https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600&h=400&fit=crop)`,
-          }}
+        <Image
+          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600&h=400&fit=crop"
+          alt=""
+          fill
+          className="object-cover opacity-40"
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/60 to-ink/80" />
         <div className="relative h-full flex items-center justify-center">
@@ -101,7 +104,7 @@ export default async function ProductsPage({
         </div>
 
         <div className="flex gap-8">
-          <Suspense fallback={null}>
+          <Suspense fallback={<div className="w-64 animate-pulse bg-bg-secondary rounded-card h-96" />}>
             <ProductFilters />
           </Suspense>
 

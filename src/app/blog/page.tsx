@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { getApiSupabase } from "@/lib/supabase";
 
@@ -32,10 +33,13 @@ export default async function BlogPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {posts.map((post: any) => (
             <Link key={post.id} href={`/blog/${post.slug}`} className="group block">
-              <div className="aspect-[16/9] bg-card-bg rounded-card overflow-hidden mb-4">
-                <div
-                  className="w-full h-full bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                  style={{ backgroundImage: `url(${post.image || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&h=338&fit=crop"})` }}
+              <div className="aspect-[16/9] bg-card-bg rounded-card overflow-hidden mb-4 relative">
+                <Image
+                  src={post.image || "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=600&h=338&fit=crop"}
+                  alt={post.title}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               </div>
               <p className="text-xs text-terracotta uppercase tracking-wider mb-1">{post.author || "G-MART"}</p>

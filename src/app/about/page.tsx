@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ShieldIcon, StarIcon, TruckIcon, CreditCardIcon } from "@/components/icons";
 
@@ -12,9 +13,13 @@ export default function AboutPage() {
     <div>
       {/* Hero */}
       <section className="relative h-64 md:h-80 bg-ink overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600&h=600&fit=crop)" }}
+        <Image
+          src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1600&h=600&fit=crop"
+          alt=""
+          fill
+          className="object-cover opacity-40"
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/60 to-ink/80" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-4">
@@ -36,9 +41,12 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="aspect-[4/3] bg-card-bg rounded-card overflow-hidden">
-            <div
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: "url(https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=450&fit=crop)" }}
+            <Image
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=450&fit=crop"
+              alt="Our workshop"
+              width={600}
+              height={450}
+              className="w-full h-full object-cover"
             />
           </div>
         </div>

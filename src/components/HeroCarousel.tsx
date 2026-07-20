@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface HeroSlide {
   image: string;
@@ -39,9 +40,13 @@ export default function HeroCarousel({ slides }: { slides: HeroSlide[] }) {
             i === current ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
+          <Image
+            src={slide.image}
+            alt={slide.title}
+            fill
+            className="object-cover"
+            priority={i === 0}
+            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-ink/80 to-ink/30" />
         </div>

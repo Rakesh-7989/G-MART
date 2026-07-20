@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { ShieldIcon, TruckIcon, CreditCardIcon, PencilIcon, StarIcon, UsersIcon } from "@/components/icons";
 import BulkOrderForm from "@/components/BulkOrderForm";
@@ -33,9 +34,13 @@ export default function BulkOrdersPage() {
     <div>
       {/* Hero */}
       <section className="relative h-64 md:h-80 bg-ink overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1556409102-5e5b2c6b7e9a?w=1600&h=600&fit=crop)" }}
+        <Image
+          src="https://images.unsplash.com/photo-1556409102-5e5b2c6b7e9a?w=1600&h=600&fit=crop"
+          alt=""
+          fill
+          className="object-cover opacity-40"
+          priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-ink/60 to-ink/80" />
         <div className="relative h-full flex flex-col items-center justify-center text-center px-4">

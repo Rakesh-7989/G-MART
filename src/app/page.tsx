@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getFeaturedProducts } from "@/lib/api";
 import ProductCard from "@/components/ProductCard";
 import HeroCarousel from "@/components/HeroCarousel";
@@ -6,7 +7,7 @@ import USPSection from "@/components/USPSection";
 import NewsletterForm from "@/components/NewsletterForm";
 import { ShieldIcon, TruckIcon, CreditCardIcon, PencilIcon, StarIcon } from "@/components/icons";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 const HERO_SLIDES = [
   {
@@ -64,9 +65,12 @@ export default async function HomePage() {
               className="group text-center"
             >
               <div className="w-24 h-24 md:w-28 md:h-28 mx-auto rounded-full overflow-hidden bg-card-bg mb-3 ring-2 ring-transparent group-hover:ring-terracotta transition-all">
-                <div
-                  className="w-full h-full bg-cover bg-center group-hover:scale-110 transition-transform duration-500"
-                  style={{ backgroundImage: `url(${cat.image})` }}
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  width={112}
+                  height={112}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
               </div>
               <span className="text-sm font-medium text-ink group-hover:text-terracotta transition-colors">
@@ -102,9 +106,12 @@ export default async function HomePage() {
                 href={`/products?category=${cat.slug}`}
                 className="group block relative aspect-[4/5] overflow-hidden rounded-card bg-card-bg"
               >
-                <div
-                  className="absolute inset-0 bg-cover bg-center group-hover:scale-105 transition-transform duration-500"
-                  style={{ backgroundImage: `url(${cat.image})` }}
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 768px) 50vw, 25vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -166,9 +173,12 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="aspect-[4/3] bg-card-bg rounded-card overflow-hidden">
-            <div
-              className="w-full h-full bg-cover bg-center"
-              style={{ backgroundImage: "url(https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=450&fit=crop)" }}
+            <Image
+              src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=450&fit=crop"
+              alt="Handcrafted furniture in our workshop"
+              width={600}
+              height={450}
+              className="w-full h-full object-cover"
             />
           </div>
         </div>
